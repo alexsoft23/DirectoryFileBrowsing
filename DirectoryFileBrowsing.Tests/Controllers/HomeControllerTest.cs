@@ -1,7 +1,6 @@
 ﻿using System.Web.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DirectoryFileBrowsing;
 using DirectoryFileBrowsing.Controllers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DirectoryFileBrowsing.Tests.Controllers
 {

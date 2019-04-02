@@ -19,32 +19,38 @@ namespace DirectoryFileBrowsing.Infrastructure.Repositories
 		public List<Point> GetObList(string path)
 		{
 			var directories = new List<Point>();
+
+
 			var directory = new DirectoryInfo(path);
 			try
 			{
-				directories.AddRange(from dir in directory.EnumerateDirectories()
-									 let f = File.GetAttributes(dir.FullName)
-									 where (f & FileAttributes.ReparsePoint) != FileAttributes.ReparsePoint
-									 where (f & FileAttributes.Hidden) != FileAttributes.Hidden
-									 select new Point(dir.FullName, PointType.Directory));
+				directories.AddRange((from dir in directory.EnumerateDirectories()
+									  let f = File.GetAttributes(dir.FullName)
+									  where (f & FileAttributes.ReparsePoint) != FileAttributes.ReparsePoint
+									  where (f & FileAttributes.Hidden) != FileAttributes.Hidden
+									  select new Point(dir.FullName, PointType.Directory))
+									 .Union(from fileInfo in directory.EnumerateFiles()
+											let f = File.GetAttributes(fileInfo.FullName)
+											where (f & FileAttributes.Hidden) != FileAttributes.Hidden
+											select new Point(fileInfo.FullName.Replace(@"\", "\\"), PointType.File)));
 
 			}
 			catch
 			{
 				// ignored
 			}
-			try
-			{
-				directories.AddRange(from fileInfo in directory.EnumerateFiles()
-									 let f = File.GetAttributes(fileInfo.FullName)
-									 where (f & FileAttributes.Hidden) != FileAttributes.Hidden
-									 select new Point(fileInfo.FullName.Replace(@"\", "\\"), PointType.File));
-			}
-			catch
-			{
+			//try
+			//{
+			//	directories.AddRange(from fileInfo in directory.EnumerateFiles()
+			//						 let f = File.GetAttributes(fileInfo.FullName)
+			//						 where (f & FileAttributes.Hidden) != FileAttributes.Hidden
+			//						 select new Point(fileInfo.FullName.Replace(@"\", "\\"), PointType.File));
+			//}
+			//catch
+			//{
 
-				// ignored
-			}
+			//	// ignored
+			//}
 			return directories;
 		}
 
@@ -65,7 +71,7 @@ namespace DirectoryFileBrowsing.Infrastructure.Repositories
 			while (dirs.Count > 0)
 			{
 				var currentDir = dirs.Pop();
-				string[] subDirs;
+				string[] subDirs = new string[] { };
 				try
 				{
 					subDirs = Directory.GetDirectories(currentDir);
@@ -74,7 +80,7 @@ namespace DirectoryFileBrowsing.Infrastructure.Repositories
 				{
 					continue;
 				}
-				string[] files;
+				string[] files = new string[] { };
 				try
 				{
 					files = Directory.GetFiles(currentDir);

@@ -18,8 +18,14 @@ namespace DirectoryFileBrowsing.Tests.Controllers
 
 			// Assert
 			Assert.IsNotNull(result);
-
+			//Check if bla bla
 			Assert.AreEqual("Home Page", result.ViewBag.Title);
+		}
+
+		[TestMethod]
+		public void EmptyTest()
+		{
+
 		}
 	}
 }
